@@ -1,0 +1,13 @@
+.menu {
+    .menu-item {
+        .item-expansion {
+            max-height: 0;
+            overflow: hidden;
+            transition: all 500ms ease;
+            border-bottom: 1px solid gray;
+            &.active {
+                max-height: 200px;
+            }
+        }
+    }
+}

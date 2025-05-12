@@ -1,0 +1,15 @@
+.navbar {
+    .navbar-links {
+        .link {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+                "Lucida Sans", Arial, sans-serif;
+            &:hover {
+                background-color: var(--color-hover-text-bg);
+                color: rgb(241, 240, 240);
+                transition: background-color 0.3s linear;
+            }
+        }
+    }
+}
