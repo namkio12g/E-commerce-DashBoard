@@ -1,13 +1,63 @@
-import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import React, { useEffect } from "react";
 import personLogo from "../../assets/happiness.png";
 import { PanelRightOpenIcon, Gauge, ShoppingBasket } from "lucide-react";
 import VBLogo from "../../assets/medium.png";
 import EarthLogo from "../../assets/planet-earth.png";
 import { H1ClassName, SmallTextClassName } from "@/utils";
-import ProductCard from "@/components/ProductCard";
+import { createColumnHelper } from "@tanstack/react-table";
+import { DataTale } from "@/components/Table/ProductsTable";
+import { ProductType } from "@/types/commonTypes";
+import { useProducts } from "@/api/queries/useProducts";
+import { useBoundStore } from "@/stores";
+
+const columnHelper = createColumnHelper<ProductType>();
+const columns = [
+    columnHelper.accessor("id", {
+        cell: (info) => info.getValue(),
+        footer: (info: { column: { id: string } }) => info.column.id,
+    }),
+    columnHelper.accessor("name", {
+        id: "name",
+        cell: (info) => <i>{info.getValue()}</i>,
+        header: () => <span>Product Name</span>,
+    }),
+    columnHelper.accessor("category", {
+        header: () => "Category",
+        cell: (info) => info.renderValue(),
+    }),
+    columnHelper.accessor("price", {
+        header: () => <span>Price</span>,
+        cell: (info) => <p>${info.getValue()}</p>,
+    }),
+    columnHelper.accessor("quantity", {
+        header: "Quantity",
+    }),
+    columnHelper.accessor("isActive", {
+        header: "Active",
+    }),
+    columnHelper.accessor("date", {
+        header: "Created Date",
+        cell: (info) => (
+            <p>{new Date(info.getValue()).toLocaleDateString("en-GB")}</p>
+        ),
+    }),
+    columnHelper.accessor("image", {
+        header: "thumbnail",
+        cell: (info) => <img src={info.getValue()} alt="thumbnail" />,
+    }),
+];
 
 const DashBoardPage: React.FC = () => {
+    const { data, isLoading, isError } = useProducts();
+    const setProduct = useBoundStore.use.setProducts();
+    const productsData = useBoundStore.use.products();
+
+    useEffect(() => {
+        if (data) {
+            setProduct(data);
+        }
+    }, [data]);
+    console.log(productsData);
     return (
         <div
             className="flex flex-row gap-1 shadow-md rounded-lg 
@@ -82,11 +132,12 @@ const DashBoardPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="product-content">
-                    <div className="grid grid-cols-3 gap-3">
-                        <ProductCard url="https://images.pexels.com/photos/335257/pexels-photo-335257.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/391733/pexels-photo-391733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                    </div>
+                    {isLoading && <p>Loading....</p>}
+                    {isError && <p>Error....</p>}
+
+                    {productsData && (
+                        <DataTale data={productsData} columns={columns} />
+                    )}
                 </div>
             </div>
         </div>
