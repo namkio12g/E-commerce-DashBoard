@@ -6,28 +6,38 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
 type CartCardProps = {
-    // data: ProductCartType;
-    // handleRemoveFromCart: (id: string) => void;
-    // handleIncrement: (id: string) => void;
-    // handleDecrement: (id: string) => void;
-    url: string;
+    data: ProductCartType;
 };
-const CartCard: React.FC<CartCardProps> = ({ url }) => {
+const CartCard: React.FC<CartCardProps> = ({ data }) => {
+    const setQuantity = useBoundStore.use.setProductQuantityInCart();
+    const removeProductFromCart = useBoundStore.use.removeProductFromCart();
+
+    const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value, 10);
+        if (value > 0) {
+            setQuantity(value, data.id);
+        } else {
+            removeProductFromCart(data.id);
+        }
+    };
+    const handleRemoveProduct = () => {
+        removeProductFromCart(data.id);
+    };
     return (
         <>
             <div className="flex flex-row place-items-start h-auto gap-2 border-t-1 border-b-1 py-3 border-foreground/40">
-                <img src={url} alt="" className="w-2/8 object-fit rounded-lg" />
+                <img
+                    src={data.image}
+                    alt=""
+                    className="w-2/8 object-fit rounded-lg"
+                />
                 <div className="product-info flex flex-col place-content-center w-4/8">
                     <p className="product-title text-sm font-semibold line-clamp-2 ">
-                        My Product Lorem ipsum dolor, sit amet consectetur
-                        adipisicing elit. Consequuntur quos est, ut magnam
-                        dolore eaque voluptatem maxime accusantium ullam
-                        dignissimos dolor exercitationem corporis pariatur
-                        repellendus quasi distinctio iste adipisci aspernatur.
+                        {data.name}
                     </p>
                     <div className="flex flex-row gap-2 text-md font-mono">
                         <span className="inline-block  text-orange-500 ">
-                            $40.0
+                            ${data.price}
                         </span>
                     </div>
                 </div>
@@ -35,10 +45,13 @@ const CartCard: React.FC<CartCardProps> = ({ url }) => {
                     <Input
                         type="number"
                         className="w-14 px-3"
-                        min={1}
-                        defaultValue={1}
+                        defaultValue={data.quantityInCart}
+                        onChange={handleChangeValue}
                     />
-                    <Button className="w-14 text-sm! bg-orange-700 hover:bg-red-400 cursor-pointer">
+                    <Button
+                        className="w-14 text-sm! bg-orange-700 hover:bg-red-400 cursor-pointer"
+                        onClick={() => handleRemoveProduct()}
+                    >
                         remove
                     </Button>
                 </div>
@@ -50,7 +63,15 @@ const CartCard: React.FC<CartCardProps> = ({ url }) => {
 const CartContainer: React.FC = () => {
     const isOpen = useBoundStore.use.isCartOpen();
     const onClose = useBoundStore.use.toggleCart();
-    console.log(isOpen);
+    const products = useBoundStore.use.productsInCart();
+
+    const total = React.useMemo(() => {
+        return products
+            .reduce((acc, product) => {
+                return acc + product.price * product.quantityInCart;
+            }, 0)
+            .toFixed(2);
+    }, [products]);
 
     if (!isOpen) return null;
     return (
@@ -71,12 +92,9 @@ const CartContainer: React.FC = () => {
                                 Your cart
                             </p>
                             <div className="card-content h-11/14 overflow-y-scroll border-b-2 border-foreground mb-3">
-                                <CartCard url="https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                                <CartCard url="https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                                <CartCard url="https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                                <CartCard url="https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-
-                                <CartCard url="https://images.pexels.com/photos/4041392/pexels-photo-4041392.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
+                                {products?.map((product) => (
+                                    <CartCard key={product.id} data={product} />
+                                ))}
                             </div>
                             <div className="">
                                 <div className="w-full flex justify-between items-center gap-2 mb-2 ">
@@ -84,7 +102,7 @@ const CartContainer: React.FC = () => {
                                         Current total:
                                     </p>
                                     <p className="font-semibold text-md font-mono text-yellow-500">
-                                        $10,000
+                                        ${total}
                                     </p>
                                 </div>
                                 <Button className="w-full bg-foreground text-background hover:bg-theme-primary hover:text-white cursor-pointer">

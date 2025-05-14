@@ -1,0 +1,20 @@
+.data-table {
+    .table-header {
+        .header-cell {
+            position: relative;
+            .resizer {
+                position: absolute;
+                top: 0px;
+                right: 0px;
+                width: 3px;
+                height: 100%;
+                cursor: col-resize;
+                user-select: none;
+                touch-action: none;
+                &.isResizing {
+                    background-color: yellowgreen;
+                }
+            }
+        }
+    }
+}

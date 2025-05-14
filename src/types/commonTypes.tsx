@@ -39,5 +39,5 @@ export type ProductCartType = {
     name: string;
     category: string;
     price: number;
-    quantity: number;
+    quantityInCart: number;
 };

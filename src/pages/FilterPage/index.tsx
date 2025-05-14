@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import ShoppingBagLogo from "../../assets/shopping-bag.png";
 import { H1ClassName, SmallTextClassName } from "@/utils";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import "./index.scss";
@@ -9,9 +10,41 @@ import { useProducts } from "@/api/queries/useProducts";
 import CartContainer from "@/components/cart";
 
 const FilterPage: React.FC = () => {
-    const { data, isLoading, isError } = useProducts();
+    const { category } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const keywords = searchParams.get("keywords") || "";
+
+    const { data, isLoading, isError } = useProducts(
+        category ? `category=${category}` : ""
+    );
     const setProduct = useBoundStore.use.setProducts();
     const productsData = useBoundStore.use.products();
+
+    const searchRef = useRef<HTMLInputElement>(null);
+
+    const dataFiltered = React.useMemo(() => {
+        if (keywords === "") return productsData;
+        return productsData.filter((item) =>
+            item.name.toLowerCase().includes(keywords.toLowerCase())
+        );
+    }, [keywords, productsData]);
+
+    const handleSetKeyWords = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                if (searchRef.current?.value) {
+                    params.set("keywords", searchRef.current.value || "");
+                } else {
+                    params.delete("keywords");
+                }
+                return params;
+            });
+            setTimeout(() => {
+                window.location.reload();
+            }, 0);
+        }
+    };
 
     useEffect(() => {
         if (data) {
@@ -29,6 +62,7 @@ const FilterPage: React.FC = () => {
             }
         }
     };
+
     return (
         <>
             <CartContainer />
@@ -47,6 +81,9 @@ const FilterPage: React.FC = () => {
                                         w-full px-3 placeholder:text-theme-text-primary text-theme-text-primary 
                                         text-sm focus-within:border-theme-primary focus:outline-0`}
                                         placeholder={` Searching ...`}
+                                        onKeyDown={handleSetKeyWords}
+                                        defaultValue={keywords}
+                                        ref={searchRef}
                                     />
                                     <div className="bg-theme-primary  h-full w-3/10 place-content-center place-items-center rounded-r-full hover:opacity-80 cursor-pointer">
                                         <Search className="h-5 w-5 text-white" />
@@ -64,15 +101,24 @@ const FilterPage: React.FC = () => {
                                     <div
                                         className={`item-expansion pl-5 flex flex-col gap-2 mt-2 `}
                                     >
-                                        <p className=" font-sans text-sm hover:text-theme-primary">
+                                        <Link
+                                            className=" font-sans text-sm hover:text-theme-primary"
+                                            to={"/clothes"}
+                                        >
                                             - Clothes
-                                        </p>
-                                        <p className="font-sans text-sm hover:text-theme-primary">
+                                        </Link>
+                                        <Link
+                                            className="font-sans text-sm hover:text-theme-primary"
+                                            to={"/electronics"}
+                                        >
                                             - Electronics
-                                        </p>
-                                        <p className="font-sans text-sm hover:text-theme-primary">
+                                        </Link>
+                                        <Link
+                                            className="font-sans text-sm hover:text-theme-primary"
+                                            to={"/furniture"}
+                                        >
                                             - Furniture
-                                        </p>
+                                        </Link>
                                     </div>
                                 </div>
                             </li>
@@ -107,11 +153,26 @@ const FilterPage: React.FC = () => {
                         </div>
                     </div>
                     <div className="product-content">
-                        <div className="grid grid-cols-3 gap-3">
-                            {productsData?.map((product) => (
-                                <ProductCard key={product.id} data={product} />
-                            ))}
-                        </div>
+                        {isLoading && (
+                            <div className="flex justify-center items-center">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+                        {isError && (
+                            <div className="flex justify-center items-center">
+                                <div className="spinner"></div>
+                            </div>
+                        )}
+                        {dataFiltered && (
+                            <div className="grid grid-cols-3 gap-3">
+                                {dataFiltered?.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        data={product}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

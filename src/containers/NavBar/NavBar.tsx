@@ -1,13 +1,23 @@
-import React from "react";
+import React, { use } from "react";
 import MLogo from "../../assets/meetup.png";
 import { Link } from "react-router";
-import { ShoppingCartIcon, LogInIcon } from "lucide-react";
+import { ShoppingCartIcon, LogOutIcon } from "lucide-react";
 import "./NavBar.scss";
 import { LoginDialog } from "@/components/Dialogs/LoginDialogs";
 import { useBoundStore } from "@/stores";
+import { UserLoginType } from "@/types/commonTypes";
+import { toast } from "sonner";
 
 const NavBar: React.FC = () => {
     const onClose = useBoundStore.use.toggleCart();
+    const handleLogoutUser = useBoundStore.use.Logout();
+    const userInfo: UserLoginType | undefined =
+        useBoundStore.use.UserInfo?.() ?? undefined;
+
+    const handleLogout = () => {
+        handleLogoutUser();
+        toast.success("Logged out successfully");
+    };
 
     return (
         <nav className="navbar flex place-content-center py-5  w-full rounded-sm shadow-lg place-items-center bg-secondary-bg z-2">
@@ -42,14 +52,18 @@ const NavBar: React.FC = () => {
                         >
                             <ShoppingCartIcon className="h-6 w-6 text-theme-text-primary" />
                         </li>
-                        {/* <li className="link inline-block mr-7 text-xl rounded-md p-2 cursor-pointer">
-                            <Link to="/login">
-                                <LogInIcon className="h-6 w-6 text-theme-text-primary" />
-                            </Link>
-                        </li> */}
-                        <li className="link inline-block mr-7 text-xl rounded-md p-2 cursor-pointer">
-                            <LoginDialog />
-                        </li>
+                        {userInfo ? (
+                            <li
+                                className="link inline-block mr-7 text-xl rounded-md p-2 cursor-pointer"
+                                onClick={() => handleLogout()}
+                            >
+                                <LogOutIcon className="h-6 w-6 text-theme-text-primary" />
+                            </li>
+                        ) : (
+                            <li className="link inline-block mr-7 text-xl rounded-md p-2 cursor-pointer">
+                                <LoginDialog />
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>

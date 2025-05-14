@@ -5,5 +5,8 @@ export const loginQuery = async (
     email: string,
     password: string
 ): Promise<UserLoginType> => {
-    return await apiClient.get(`/products?email=${email}&password=${password}`);
+    const res = await apiClient.get(
+        `/users?email=${email}&password=${password}`
+    );
+    return res.data[0];
 };

@@ -2,8 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../TaskAPI";
 import { ProductType } from "@/types/commonTypes";
 
-const fetchProducts = async (): Promise<ProductType[]> => {
-    const res = await apiClient.get("/products");
+export const fetchProducts = async (query: string): Promise<ProductType[]> => {
+    console.log(query);
+    const res = await apiClient.get(`/products?${query}`);
     return res.data;
 };
 const addNewProduct = async (product: ProductType): Promise<ProductType> => {
@@ -19,11 +20,11 @@ const deleteProduct = async (id: string): Promise<ProductType> => {
     return res.data;
 };
 
-export const useProducts = () => {
+export const useProducts = (query: string = "") => {
     return useQuery({
-        queryKey: ["products"],
-        queryFn: fetchProducts,
-        staleTime: 1000 * 60 * 1,
+        queryKey: ["products", query],
+        queryFn: () => fetchProducts(query),
+        staleTime: 1000 * 30,
         refetchOnMount: true,
         refetchOnWindowFocus: false,
     });
