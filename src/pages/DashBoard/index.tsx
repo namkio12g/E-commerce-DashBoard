@@ -1,13 +1,17 @@
 import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
 import personLogo from "../../assets/happiness.png";
 import { PanelRightOpenIcon, Gauge, ShoppingBasket } from "lucide-react";
 import VBLogo from "../../assets/medium.png";
 import EarthLogo from "../../assets/planet-earth.png";
 import { H1ClassName, SmallTextClassName } from "@/utils";
-import ProductCard from "@/components/ProductCard";
+import ProductsTable from "@/components/Table/ProductsTable";
+import { ProductDialog } from "@/components/Dialogs/ProductDialog";
+import { Button } from "@/components/ui/button";
+import { useBoundStore } from "@/stores";
 
 const DashBoardPage: React.FC = () => {
+    const openAddProductDialog = useBoundStore.use.setAddProductDialogData();
+
     return (
         <div
             className="flex flex-row gap-1 shadow-md rounded-lg 
@@ -81,12 +85,15 @@ const DashBoardPage: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                <div className="product-content">
-                    <div className="grid grid-cols-3 gap-3">
-                        <ProductCard url="https://images.pexels.com/photos/335257/pexels-photo-335257.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/391733/pexels-photo-391733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                    </div>
+                <div className="product-content w-full ">
+                    <Button
+                        onClick={() => openAddProductDialog()}
+                        className="bg-foreground hover:bg-gray-600 cursor-pointer text-background mb-4"
+                    >
+                        Add a new Product
+                    </Button>
+                    <ProductDialog />
+                    <ProductsTable />
                 </div>
             </div>
         </div>

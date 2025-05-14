@@ -10,18 +10,36 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { ClickCommonClassName } from "@/utils";
+import { ProductCartType, ProductType } from "@/types/commonTypes";
+import { useBoundStore } from "@/stores";
+import { toast } from "sonner";
 
 interface Props {
-    url: string;
+    data: ProductType;
 }
 
-const ProductCard: React.FC<Props> = ({ url }) => {
+const ProductCard: React.FC<Props> = ({ data }) => {
+    const addToCart = useBoundStore.use.addProductToCart();
+
+    const handleAddToCart = (data: ProductCartType) => {
+        addToCart(data);
+        toast.success("Product added to cart", {
+            duration: 1000,
+            action: {
+                label: "cancel",
+                onClick: () => {
+                    toast.dismiss();
+                },
+            },
+        });
+    };
+
     return (
         <Card className="h-auto p-2 rounded-lg border-none gap-1 bg-secondary-bg ">
             <CardHeader className="relative p-0 m-0 ">
                 <div className="fit-content relative group cursor-pointer">
                     <img
-                        src={url}
+                        src={data.image}
                         alt=""
                         className=" w-full  h-[160px] object-fit rounded-lg"
                     />
@@ -33,6 +51,7 @@ const ProductCard: React.FC<Props> = ({ url }) => {
                         </button>
                         <button
                             className={`rounded-lg p-2 bg-background ${ClickCommonClassName}`}
+                            onClick={() => handleAddToCart(data)}
                         >
                             <ShoppingBag className="w-6 h-6" />
                         </button>
@@ -41,7 +60,10 @@ const ProductCard: React.FC<Props> = ({ url }) => {
             </CardHeader>
             <CardContent className="p-0">
                 <CardTitle className="text-md font-roboto font-bold line-clamp-1 mb-3 text-foreground">
-                    Product Name hello Lorem ipsum dolor sit amet.
+                    {data.name}
+                    <p className="text-xs text-foreground/50 line-clamp-2">
+                        {data.description}
+                    </p>
                 </CardTitle>
                 <CardDescription className="text-sm">
                     <div className="flex flex-row items-center">
@@ -56,7 +78,7 @@ const ProductCard: React.FC<Props> = ({ url }) => {
                             Price
                         </span>
                         <span className=" font-mono font-bold ml-2 text-foreground">
-                            $ 30.00
+                            $ {data.price}
                         </span>
                     </div>
                     <div className="flex flex-row justify-between items-center">
@@ -64,7 +86,7 @@ const ProductCard: React.FC<Props> = ({ url }) => {
                             Quantity
                         </span>
                         <span className=" font-mono font-bold ml-2 text-foreground">
-                            $ 30.00
+                            {data.quantity}
                         </span>
                     </div>
                 </CardDescription>

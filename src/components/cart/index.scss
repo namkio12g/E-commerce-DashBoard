@@ -1,0 +1,9 @@
+.cart-modal-overlay {
+    .cart-div {
+        right: -250px;
+        transition: all 1.5s ease-in-out;
+        &.active {
+            right: 0px;
+        }
+    }
+}
