@@ -36,7 +36,11 @@ export const LoginDialog: React.FC = () => {
         loginQuery(data.email, data.password)
             .then((res) => {
                 if (res) {
-                    setUserProfile(res);
+                    try {
+                        setUserProfile(res);
+                    } catch (error) {
+                        console.log(error);
+                    }
                     toast.success("Login success", {
                         description: "Welcome to the MightShops",
                         action: {

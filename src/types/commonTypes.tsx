@@ -1,10 +1,14 @@
 export const validCategories: string[] = [
-    "Fashion",
-    "Health",
-    "Electronics",
-    "Food",
-    "Travel",
-    "Sports",
+    "fashion",
+    "health",
+    "electronics",
+    "food",
+    "travel",
+    "sports",
+    "accessories",
+    "furniture",
+    "home Appliances",
+    "computers",
 ];
 
 export type AddNewProductType = {
@@ -14,6 +18,7 @@ export type AddNewProductType = {
     quantity: number;
     description: string;
     isActive: boolean;
+    image: string;
     date: Date;
 };
 export type UserLoginType = {
@@ -39,5 +44,5 @@ export type ProductCartType = {
     name: string;
     category: string;
     price: number;
-    quantityInCart: number;
+    quantityInCart?: number;
 };

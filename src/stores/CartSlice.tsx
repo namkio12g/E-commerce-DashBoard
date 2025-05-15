@@ -1,6 +1,5 @@
 import { StateCreator } from "zustand";
 import { ProductCartType } from "@/types/commonTypes";
-import { persist } from "zustand/middleware";
 
 export interface CartSlice {
     productsInCart: ProductCartType[];
@@ -11,7 +10,7 @@ export interface CartSlice {
     toggleCart: (value: boolean) => void;
 }
 
-const createCartSlice: StateCreator<CartSlice> = (set) => ({
+export const createCartSlice: StateCreator<CartSlice> = (set) => ({
     productsInCart: [],
     isCartOpen: false,
     toggleCart: (value: boolean) => {
@@ -52,10 +51,4 @@ const createCartSlice: StateCreator<CartSlice> = (set) => ({
             ),
         }));
     },
-});
-export const persistCartSlice = persist(createCartSlice, {
-    name: "cart-store",
-    partialize: (state) => ({
-        productsInCart: state.productsInCart,
-    }),
 });

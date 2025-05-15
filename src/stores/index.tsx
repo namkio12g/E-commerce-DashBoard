@@ -1,14 +1,28 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { createProductSlice, ProductSlice } from "./ProductSlice";
 import { createSelectors } from "./createSelectores";
-import { persistCartSlice, CartSlice } from "./CartSlice";
+import { createCartSlice, CartSlice } from "./CartSlice";
 import { createUserSlice, UserSlice } from "./UserSlice";
 
-interface StoreState extends CartSlice, ProductSlice, UserSlice {}
+type StoreState = CartSlice & UserSlice & ProductSlice;
 
-const useBoundStoreBase = create<StoreState>((...a) => ({
-    ...persistCartSlice(...a),
-    ...createUserSlice(...a),
-    ...createProductSlice(...a),
-}));
+export const useBoundStoreBase = create<StoreState>()(
+    persist(
+        (...a) => ({
+            ...createCartSlice(...a),
+            ...createUserSlice(...a),
+            ...createProductSlice(...a),
+        }),
+        {
+            name: "app-store",
+            partialize: (state) => ({
+                UserInfo: state.UserInfo,
+                productsInCart: state.productsInCart,
+            }),
+        }
+    )
+);
+
+// Hook accessors
 export const useBoundStore = createSelectors(useBoundStoreBase);

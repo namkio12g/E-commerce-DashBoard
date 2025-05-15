@@ -21,8 +21,9 @@ interface Props {
 const ProductCard: React.FC<Props> = ({ data }) => {
     const addToCart = useBoundStore.use.addProductToCart();
 
-    const handleAddToCart = (data: ProductCartType) => {
-        addToCart(data);
+    const handleAddToCart = (data: ProductType) => {
+        const product: ProductCartType = data;
+        addToCart(product);
         toast.success("Product added to cart", {
             duration: 1000,
             action: {
@@ -78,7 +79,7 @@ const ProductCard: React.FC<Props> = ({ data }) => {
                             Price
                         </span>
                         <span className=" font-mono font-bold ml-2 text-foreground">
-                            $ {data.price}
+                            ${data.price}
                         </span>
                     </div>
                     <div className="flex flex-row justify-between items-center">

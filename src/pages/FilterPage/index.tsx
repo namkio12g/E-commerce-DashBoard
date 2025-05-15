@@ -68,7 +68,7 @@ const FilterPage: React.FC = () => {
             <CartContainer />
             <div className="all-tasks-container min-w-4/5 flex flex-row  pt-1 px-4 place-content-center">
                 <div
-                    className="left-container w-1/5 pt-10 bg-secondary-bg rounded-lg
+                    className="left-container w-1/5 pt-10 bg-secondary-bg rounded-lg md:block xs:hidden 
             "
                 >
                     <div className=" w-full px-4">
@@ -127,7 +127,7 @@ const FilterPage: React.FC = () => {
                 </div>
                 <div className="right-container md:w-4/5 xs:w-full p-3   ">
                     <div
-                        className="top-banner flex flex-row-reverse w-full h-auto bg-theme-primary 
+                        className="top-banner flex sm:flex-row-reverse xs:flex-col w-full h-auto bg-theme-primary 
                 p-3 rounded-lg mb-6"
                     >
                         <div className="right">
@@ -164,7 +164,7 @@ const FilterPage: React.FC = () => {
                             </div>
                         )}
                         {dataFiltered && (
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid md:grid-cols-3 sm:grid-cols-2 xs:grid-col-1 gap-3">
                                 {dataFiltered?.map((product) => (
                                     <ProductCard
                                         key={product.id}

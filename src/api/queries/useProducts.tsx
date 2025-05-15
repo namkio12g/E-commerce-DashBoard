@@ -1,13 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../TaskAPI";
-import { ProductType } from "@/types/commonTypes";
+import { AddNewProductType, ProductType } from "@/types/commonTypes";
 
 export const fetchProducts = async (query: string): Promise<ProductType[]> => {
     console.log(query);
-    const res = await apiClient.get(`/products?${query}`);
+    const res = await apiClient.get(`/products?isDelete=false&${query}`);
     return res.data;
 };
-const addNewProduct = async (product: ProductType): Promise<ProductType> => {
+const addNewProduct = async (
+    product: AddNewProductType
+): Promise<ProductType> => {
     const res = await apiClient.post("/products", product);
     return res.data;
 };
@@ -16,7 +18,7 @@ const editProduct = async (product: ProductType): Promise<ProductType> => {
     return res.data;
 };
 const deleteProduct = async (id: string): Promise<ProductType> => {
-    const res = await apiClient.delete(`/products/${id}`);
+    const res = await apiClient.patch(`/products/${id}`, { isDelete: true });
     return res.data;
 };
 

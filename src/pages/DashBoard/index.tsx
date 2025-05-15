@@ -8,10 +8,21 @@ import ProductsTable from "@/components/Table/ProductsTable";
 import { ProductDialog } from "@/components/Dialogs/ProductDialog";
 import { Button } from "@/components/ui/button";
 import { useBoundStore } from "@/stores";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const DashBoardPage: React.FC = () => {
     const openAddProductDialog = useBoundStore.use.setAddProductDialogData();
+    const userInfo = useBoundStore.use.UserInfo?.();
 
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        if (!userInfo) {
+            toast.warning("You are not allowed to DashBoard");
+            navigate("/", { replace: true });
+        }
+    }, [userInfo, navigate]);
+    if (!userInfo) return <></>;
     return (
         <div
             className="flex flex-row gap-1 shadow-md rounded-lg 
@@ -54,7 +65,7 @@ const DashBoardPage: React.FC = () => {
             <div className="right-container md:w-4/5 xs:w-full p-3 b ">
                 <div className="mb-4">
                     <p className="text-lg font-playfair">Good morning,</p>
-                    <p className="text-2xl font-bold">Frank Frozen</p>
+                    <p className="text-2xl font-bold">{userInfo.name}</p>
                 </div>
                 <div
                     className="top-banner flex flex-row-reverse w-full h-auto bg-admin-primary 

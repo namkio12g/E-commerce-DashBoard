@@ -6,6 +6,8 @@ export interface ProductSlice {
     flagProductDialogOpen: "edit" | "add" | undefined;
     editProductData: ProductType | null;
     addProduct: (product: ProductType) => void;
+    updateProduct: (product: ProductType) => void;
+    deleteProduct: (productId: string) => void;
     setProducts: (products: ProductType[]) => void;
 
     setEditProductDialogData: (product: ProductType) => void;
@@ -20,6 +22,18 @@ export const createProductSlice: StateCreator<ProductSlice> = (set) => ({
     addProduct: (product: ProductType) => {
         set((state) => ({
             products: [...state.products, product],
+        }));
+    },
+    updateProduct: (product: ProductType) => {
+        set((state) => ({
+            products: state.products.map((p) =>
+                p.id === product.id ? product : p
+            ),
+        }));
+    },
+    deleteProduct: (productId: string) => {
+        set((state) => ({
+            products: state.products.filter((p) => p.id !== productId),
         }));
     },
     setProducts: (products: ProductType[]) => {

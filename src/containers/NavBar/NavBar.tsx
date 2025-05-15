@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import MLogo from "../../assets/meetup.png";
 import { Link } from "react-router";
 import { ShoppingCartIcon, LogOutIcon } from "lucide-react";
