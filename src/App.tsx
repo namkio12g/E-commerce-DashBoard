@@ -4,6 +4,7 @@ import NavBar from "./containers/NavBar/NavBar";
 import FilterPage from "./pages/FilterPage";
 import DashBoardPage from "./pages/DashBoard";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Toaster } from "sonner";
 
 function App() {
     const UseNavBar = ({ children }: { children: React.ReactNode }) => {
@@ -20,10 +21,19 @@ function App() {
     return (
         <>
             <ThemeProvider>
+                <Toaster />
                 <BrowserRouter>
                     <Routes>
                         <Route
                             path="/"
+                            element={
+                                <UseNavBar>
+                                    <FilterPage />
+                                </UseNavBar>
+                            }
+                        />
+                        <Route
+                            path="/:category"
                             element={
                                 <UseNavBar>
                                     <FilterPage />

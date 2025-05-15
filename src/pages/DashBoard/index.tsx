@@ -1,13 +1,28 @@
 import React from "react";
-import { Link, useSearchParams } from "react-router-dom";
 import personLogo from "../../assets/happiness.png";
 import { PanelRightOpenIcon, Gauge, ShoppingBasket } from "lucide-react";
 import VBLogo from "../../assets/medium.png";
 import EarthLogo from "../../assets/planet-earth.png";
 import { H1ClassName, SmallTextClassName } from "@/utils";
-import ProductCard from "@/components/ProductCard";
+import ProductsTable from "@/components/Table/ProductsTable";
+import { ProductDialog } from "@/components/Dialogs/ProductDialog";
+import { Button } from "@/components/ui/button";
+import { useBoundStore } from "@/stores";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const DashBoardPage: React.FC = () => {
+    const openAddProductDialog = useBoundStore.use.setAddProductDialogData();
+    const userInfo = useBoundStore.use.UserInfo?.();
+
+    const navigate = useNavigate();
+    React.useEffect(() => {
+        if (!userInfo) {
+            toast.warning("You are not allowed to DashBoard");
+            navigate("/", { replace: true });
+        }
+    }, [userInfo, navigate]);
+    if (!userInfo) return <></>;
     return (
         <div
             className="flex flex-row gap-1 shadow-md rounded-lg 
@@ -50,7 +65,7 @@ const DashBoardPage: React.FC = () => {
             <div className="right-container md:w-4/5 xs:w-full p-3 b ">
                 <div className="mb-4">
                     <p className="text-lg font-playfair">Good morning,</p>
-                    <p className="text-2xl font-bold">Frank Frozen</p>
+                    <p className="text-2xl font-bold">{userInfo.name}</p>
                 </div>
                 <div
                     className="top-banner flex flex-row-reverse w-full h-auto bg-admin-primary 
@@ -81,12 +96,15 @@ const DashBoardPage: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                <div className="product-content">
-                    <div className="grid grid-cols-3 gap-3">
-                        <ProductCard url="https://images.pexels.com/photos/335257/pexels-photo-335257.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                        <ProductCard url="https://images.pexels.com/photos/391733/pexels-photo-391733.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
-                    </div>
+                <div className="product-content w-full ">
+                    <Button
+                        onClick={() => openAddProductDialog()}
+                        className="bg-foreground hover:bg-gray-600 cursor-pointer text-background mb-4"
+                    >
+                        Add a new Product
+                    </Button>
+                    <ProductDialog />
+                    <ProductsTable />
                 </div>
             </div>
         </div>
